@@ -19,6 +19,7 @@ class OllamaService(BaseService):
     ollama_model: Annotated[str, "The model name to use for ollama."] = (
         "llama3.2-vision"
     )
+    ollama_api_key: Annotated[str, "The api key to use for ollama."] = None
 
     def process_images(self, images):
         image_bytes = [self.img_to_base64(img) for img in images]
@@ -35,6 +36,9 @@ class OllamaService(BaseService):
     ):
         url = f"{self.ollama_base_url}/api/generate"
         headers = {"Content-Type": "application/json"}
+
+        if self.ollama_api_key:
+            headers["Authorization"] = f"Bearer {self.ollama_api_key}"
 
         schema = response_schema.model_json_schema()
         format_schema = {
